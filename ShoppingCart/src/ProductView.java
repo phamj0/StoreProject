@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class ProductView extends JFrame {
 
         shoppingCart = new ShoppingCart();
         productPanel = new JPanel();
-        productPanel.setLayout(new GridLayout(0, 2)); 
+        productPanel.setLayout(new GridLayout(0, 2));
 
         // Navigation bar
         JPanel navBar = new JPanel(new BorderLayout());
@@ -74,13 +75,20 @@ public class ProductView extends JFrame {
 
     private void refreshProducts() {
         List<Product> updatedProducts = ProductData.getProducts();
-        if (!updatedProducts.equals(products)) {
-            products.clear();
-            products.addAll(updatedProducts);
-            displayProducts();
-            revalidate();
-            repaint();
+        // Create a map to efficiently check for existing products
+        Map<String, Product> productMap = new HashMap<>();
+        for (Product p : products) {
+            productMap.put(p.getName(), p);
         }
+        // Merge updated products, avoiding duplicates
+        for (Product p : updatedProducts) {
+            if (!productMap.containsKey(p.getName())) {
+                products.add(p);
+            }
+        }
+        displayProducts();
+        revalidate();
+        repaint();
     }
 
 
@@ -111,19 +119,20 @@ public class ProductView extends JFrame {
 
             JButton addToCartButton = new JButton("Add to Cart");
             addToCartButton.addActionListener(e -> {
-                if (product.getQuantity() > 0) {
-                    shoppingCart.addProduct(product);
+                if (shoppingCart.addProduct(product)) {
                     JOptionPane.showMessageDialog(ProductView.this,
                             "Added to cart: " + product.getName());
                 } else {
                     JOptionPane.showMessageDialog(ProductView.this,
-                            "Product is out of stock", "Stock Alert", JOptionPane.WARNING_MESSAGE);
+                            "No more available", "Stock Alert", JOptionPane.WARNING_MESSAGE);
                 }
             });
             panel.add(addToCartButton);
 
             productPanel.add(panel);
         }
+        productPanel.revalidate();
+        productPanel.repaint();
     }
 
     private void showProductDetails(Product product) {
@@ -163,13 +172,11 @@ public class ProductView extends JFrame {
 
             JButton addButton = new JButton("+");
             addButton.addActionListener(e -> {
-                if (shoppingCart.isMaxQuantity(product)) {
-                    JOptionPane.showMessageDialog(cartDialog, "Limit 10 per customer");
-                } else {
-                    shoppingCart.addProduct(product);
-                    cartDialog.dispose();
-                    showShoppingCart();
+                if (!shoppingCart.addProduct(product)) {
+                    JOptionPane.showMessageDialog(cartDialog, "No more available", "Stock Alert", JOptionPane.WARNING_MESSAGE);
                 }
+                cartDialog.dispose();
+                showShoppingCart();
             });
             itemPanel.add(addButton);
 

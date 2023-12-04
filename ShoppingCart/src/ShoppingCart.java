@@ -4,17 +4,18 @@ import java.util.Set;
 
 public class ShoppingCart {
     private Map<Product, Integer> products;
-    private static final int MAX_QUANTITY = 10; // Maximum quantity per product
 
     public ShoppingCart() {
         products = new HashMap<>();
     }
 
-    public void addProduct(Product product) {
+    public boolean addProduct(Product product) {
         int currentQuantity = products.getOrDefault(product, 0);
-        if (currentQuantity < MAX_QUANTITY) {
+        if (currentQuantity < product.getQuantity()) {
             products.put(product, currentQuantity + 1);
+            return true;
         }
+        return false;
     }
 
     public void removeProduct(Product product) {
@@ -24,10 +25,6 @@ public class ShoppingCart {
         } else {
             products.remove(product);
         }
-    }
-
-    public boolean isMaxQuantity(Product product) {
-        return products.getOrDefault(product, 0) == MAX_QUANTITY;
     }
 
     public Set<Map.Entry<Product, Integer>> getProducts() {
@@ -41,5 +38,4 @@ public class ShoppingCart {
         }
         return total;
     }
-
 }
