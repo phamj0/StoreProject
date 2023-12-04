@@ -90,10 +90,12 @@ public class SellerView extends JFrame {
         inventoryPanel.add(new JScrollPane(inventoryTable), BorderLayout.CENTER);
 
         // Add Product Panel
-        addProductPanel = new JPanel(new GridLayout(4, 2));
+        addProductPanel = new JPanel(new GridLayout(5, 2)); // Adjust grid layout to accommodate new field
         productNameField = new JTextField(10);
         productPriceField = new JTextField(10);
         productQuantityField = new JTextField(10);
+        productDescriptionField = new JTextField(10);
+        // Add Product Panel
         addProductButton = new JButton("Add Product");
         addProductButton.addActionListener(new ActionListener() {
             @Override
@@ -101,26 +103,34 @@ public class SellerView extends JFrame {
                 try {
                     String name = productNameField.getText();
                     double price = Double.parseDouble(productPriceField.getText());
-                    String description = productDescriptionField.getText();
+                    String description = productDescriptionField.getText(); // Ensure this field is initialized
                     int quantity = Integer.parseInt(productQuantityField.getText());
                     if (quantity < 0) {
                         throw new IllegalArgumentException("Quantity cannot be negative.");
                     }
-                    products.add(new Product(name, price, description, quantity));
+                    Product newProduct = new Product(name, price, description, quantity);
+
+                    // Add product to local list and shared ProductData
+                    products.add(newProduct);
+                    ProductData.addProduct(newProduct);
+
                     updateInventoryTable();
-                } catch (IllegalArgumentException ex) {
+                } catch ( IllegalArgumentException ex) {
                     JOptionPane.showMessageDialog(SellerView.this,
                             "Invalid input: " + ex.getMessage(),
                             "Input Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+
         addProductPanel.add(new JLabel("Product Name:"));
         addProductPanel.add(productNameField);
         addProductPanel.add(new JLabel("Price:"));
         addProductPanel.add(productPriceField);
         addProductPanel.add(new JLabel("Quantity:"));
         addProductPanel.add(productQuantityField);
+        addProductPanel.add(new JLabel("Description:"));  // Add a label for description
+        addProductPanel.add(productDescriptionField);     // Add the description field to the panel
         addProductPanel.add(addProductButton);
 
         // Adding tabs to TabbedPane

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.ArrayList;
 
 public class ProductView extends JFrame {
-    private List<Product> products; 
+    private List<Product> products;
     private JPanel productPanel;
     private ShoppingCart shoppingCart; 
     private JTextField searchField;
@@ -19,6 +19,9 @@ public class ProductView extends JFrame {
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        Timer refreshTimer = new Timer(5000, e -> refreshProducts());
+        refreshTimer.start();
 
         shoppingCart = new ShoppingCart();
         productPanel = new JPanel();
@@ -69,6 +72,18 @@ public class ProductView extends JFrame {
         add(new JScrollPane(productPanel), BorderLayout.CENTER);
     }
 
+    private void refreshProducts() {
+        List<Product> updatedProducts = ProductData.getProducts();
+        if (!updatedProducts.equals(products)) {
+            products.clear();
+            products.addAll(updatedProducts);
+            displayProducts();
+            revalidate();
+            repaint();
+        }
+    }
+
+
     private void initializeProducts() {
         products = new ArrayList<>(); // Load products (hardcoded or from a database)
         products.add(new Product("Product 1", 19.99, "Description", 10));
@@ -83,6 +98,7 @@ public class ProductView extends JFrame {
     }
 
     private void displayProducts() {
+        productPanel.removeAll();
         for (Product product : products) {
             JPanel panel = new JPanel();
             panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -137,22 +153,105 @@ public class ProductView extends JFrame {
         JDialog cartDialog = new JDialog(this, "Shopping Cart", true);
         cartDialog.setLayout(new BorderLayout());
 
-        DefaultListModel<String> listModel = new DefaultListModel<>();
+        JPanel cartPanel = new JPanel();
+        cartPanel.setLayout(new BoxLayout(cartPanel, BoxLayout.Y_AXIS));
         for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
             Product product = entry.getKey();
             int quantity = entry.getValue();
-            listModel.addElement(product.getName() + " - $" + product.getPrice() + " x " + quantity);
+            JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            itemPanel.add(new JLabel(product.getName() + " - $" + product.getPrice() + " x " + quantity));
+
+            JButton addButton = new JButton("+");
+            addButton.addActionListener(e -> {
+                if (shoppingCart.isMaxQuantity(product)) {
+                    JOptionPane.showMessageDialog(cartDialog, "Limit 10 per customer");
+                } else {
+                    shoppingCart.addProduct(product);
+                    cartDialog.dispose();
+                    showShoppingCart();
+                }
+            });
+            itemPanel.add(addButton);
+
+            JButton subtractButton = new JButton("-");
+            subtractButton.addActionListener(e -> {
+                shoppingCart.removeProduct(product);
+                cartDialog.dispose();
+                showShoppingCart();
+            });
+            itemPanel.add(subtractButton);
+
+            cartPanel.add(itemPanel);
         }
 
-        JList<String> list = new JList<>(listModel);
-        cartDialog.add(new JScrollPane(list), BorderLayout.CENTER);
+        cartDialog.add(new JScrollPane(cartPanel), BorderLayout.CENTER);
 
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JLabel totalLabel = new JLabel("Total: $" + String.format("%.2f", shoppingCart.getTotal()));
         totalLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        cartDialog.add(totalLabel, BorderLayout.SOUTH);
+        bottomPanel.add(totalLabel);
 
-        cartDialog.setSize(300, 300);
+        JButton checkoutButton = new JButton("Checkout");
+        checkoutButton.addActionListener(e -> {
+            cartDialog.dispose();
+            showCheckoutWindow();
+        });
+        bottomPanel.add(checkoutButton);
+
+        cartDialog.add(new JScrollPane(cartPanel), BorderLayout.CENTER);
+        cartDialog.add(bottomPanel, BorderLayout.SOUTH);
+
+        cartDialog.setSize(400, 300);
         cartDialog.setLocationRelativeTo(this);
         cartDialog.setVisible(true);
     }
+
+// ... (Other parts of ProductView class) ...
+
+    private void showCheckoutWindow() {
+        JDialog checkoutDialog = new JDialog(this, "Checkout", true);
+        checkoutDialog.setLayout(new BorderLayout());
+
+        // Panel for cart summary
+        JPanel summaryPanel = new JPanel();
+        summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
+        summaryPanel.setBorder(BorderFactory.createTitledBorder("Cart Summary"));
+        for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
+            Product product = entry.getKey();
+            int quantity = entry.getValue();
+            summaryPanel.add(new JLabel(product.getName() + " - $" + product.getPrice() + " x " + quantity));
+        }
+        checkoutDialog.add(new JScrollPane(summaryPanel), BorderLayout.NORTH);
+
+        // Panel for payment information
+        JPanel paymentPanel = new JPanel(new GridLayout(0, 2));
+        paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
+        JTextField cardNumberField = new JTextField();
+        JTextField expiryDateField = new JTextField();
+        JTextField cvvField = new JTextField();
+        paymentPanel.add(new JLabel("Card Number:"));
+        paymentPanel.add(cardNumberField);
+        paymentPanel.add(new JLabel("Expiry Date (MM/YY):"));
+        paymentPanel.add(expiryDateField);
+        paymentPanel.add(new JLabel("CVV:"));
+        paymentPanel.add(cvvField);
+        checkoutDialog.add(paymentPanel, BorderLayout.CENTER);
+
+        // Checkout button
+        JButton confirmButton = new JButton("Confirm Purchase");
+        confirmButton.addActionListener(e -> {
+            // Handle payment processing and order confirmation
+            JOptionPane.showMessageDialog(checkoutDialog, "Purchase Successful!");
+            checkoutDialog.dispose();
+        });
+        checkoutDialog.add(confirmButton, BorderLayout.SOUTH);
+
+        checkoutDialog.setSize(400, 400);
+        checkoutDialog.setLocationRelativeTo(this);
+        checkoutDialog.setVisible(true);
+    }
+
+// ... (Rest of ProductView class) ...
+
+
 }
