@@ -240,16 +240,40 @@ public class ProductView extends JFrame {
         JButton confirmButton = new JButton("Confirm Purchase");
         confirmButton.addActionListener(e -> {
             // Handle payment processing and order confirmation
+            if (validatePaymentDetails(cardNumberField.getText(), expiryDateField.getText(), cvvField.getText())) {
                 JOptionPane.showMessageDialog(checkoutDialog, "Purchase Successful!");
                 updateProductQuantities();
                 shoppingCart.clearCart();
                 checkoutDialog.dispose();
+            }
         });
         checkoutDialog.add(confirmButton, BorderLayout.SOUTH);
 
         checkoutDialog.setSize(400, 400);
         checkoutDialog.setLocationRelativeTo(this);
         checkoutDialog.setVisible(true);
+    }
+
+    private boolean validatePaymentDetails(String cardNumber, String expiryDate, String cvv) {
+        // Validate Card Number (16 digits)
+        if (!cardNumber.matches("\\d{16}")) {
+            JOptionPane.showMessageDialog(this, "Invalid Card Number. It must be 16 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // Validate Expiry Date (MM/YY format)
+        if (!expiryDate.matches("(0[1-9]|1[0-2])/\\d{2}")) {
+            JOptionPane.showMessageDialog(this, "Invalid Expiry Date. Format must be MM/YY.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // Validate CVV (3 digits)
+        if (!cvv.matches("\\d{3}")) {
+            JOptionPane.showMessageDialog(this, "Invalid CVV. It must be 3 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
     }
 
     private void updateProductQuantities() {
