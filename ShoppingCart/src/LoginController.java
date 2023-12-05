@@ -3,10 +3,17 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Login controller that manages the user authentication and registration of the application.
+ */
 public class LoginController {
     private LoginView loginView;
     private Map<String, User> userDatabase;
 
+    /**
+     * LoginController constrcutor with the specified LoginView.
+     * @param loginView view associated with this controller.
+     */
     public LoginController(LoginView loginView) {
         this.loginView = loginView;
         this.userDatabase = new HashMap<>();
@@ -15,7 +22,15 @@ public class LoginController {
         this.loginView.addRegisterListener(new RegisterListener());
     }
 
+    /**
+     * Login listener that implements an actionListener to handle login attempts.
+     */
     class LoginListener implements ActionListener {
+        
+        /**
+         * An action that is invoked when the login button is clicked.
+         * @param e is the ActionEvent that represents the button click.
+         */
         public void actionPerformed(ActionEvent e) {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
@@ -26,7 +41,7 @@ public class LoginController {
                     loginView.displayErrorMessage("Login Successful as Customer!");
                     ProductView productView = new ProductView();
                     productView.setVisible(true);
-                    loginView.dispose(); // Close the login view
+                    loginView.dispose();
                 } else if ("Seller".equals(userDatabase.get(username).getUserType())) {
                     loginView.displayErrorMessage("Login Successful as Seller!");
                     SellerView sellerView = new SellerView();
@@ -41,7 +56,15 @@ public class LoginController {
         }
     }
 
+    /**
+     * Registration listener that implements an actionListener to handle user registration.
+     */
     class RegisterListener implements ActionListener {
+
+        /**
+         * An action that is Invoked when the register button is clicked.
+         * @param e is the ActionEvent that represents the button click.
+         */
         public void actionPerformed(ActionEvent e) {
             String username = loginView.getUsername();
             String password = loginView.getPassword();
