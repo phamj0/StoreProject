@@ -206,7 +206,6 @@ public class ProductView extends JFrame {
         cartDialog.setVisible(true);
     }
 
-// ... (Other parts of ProductView class) ...
 
     private void showCheckoutWindow() {
         JDialog checkoutDialog = new JDialog(this, "Checkout", true);
@@ -257,7 +256,7 @@ public class ProductView extends JFrame {
         for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
             Product product = entry.getKey();
             int quantityPurchased = entry.getValue();
-            ProductData.updateProductQuantity(product, -quantityPurchased); // Assuming you have such a method in ProductData
+            ProductData.updateProductQuantity(product, -quantityPurchased); 
         }
     }
 }
