@@ -59,7 +59,7 @@ public class LoginController {
 
     /**
      * Registration listener that implements an actionListener to handle user registration.
-     * The Observer pttern is used when listening to registration events.
+     * The Observer pattern is used when listening to registration events.
      */
     class RegisterListener implements ActionListener {
 
