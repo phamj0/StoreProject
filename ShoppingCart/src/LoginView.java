@@ -10,21 +10,36 @@ public class LoginView extends JFrame {
     private JButton registerButton = new JButton("Register");
 
     public LoginView() {
-        JPanel panel = new JPanel(new GridLayout(4, 2));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 200);
+        setLocationRelativeTo(null); // Center the window
+        setLayout(new BorderLayout(10, 10)); // Use BorderLayout with spacing
 
-        panel.add(new JLabel("User Type:"));
-        panel.add(userTypeComboBox);
-        panel.add(new JLabel("Username:"));
-        panel.add(usernameField);
-        panel.add(new JLabel("Password:"));
-        panel.add(passwordField);
-        panel.add(loginButton);
-        panel.add(registerButton);
+        JPanel formPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        formPanel.add(new JLabel("User Type:"));
+        formPanel.add(userTypeComboBox);
+        formPanel.add(new JLabel("Username:"));
+        formPanel.add(usernameField);
+        formPanel.add(new JLabel("Password:"));
+        formPanel.add(passwordField);
 
-        add(panel);
-        setLocationRelativeTo(null);
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+        styleButton(loginButton, new Color(100, 149, 237)); // Styling the login button
+        styleButton(registerButton, new Color(30, 144, 255)); // Styling the register button
+        buttonPanel.add(loginButton);
+        buttonPanel.add(registerButton);
+
+        add(formPanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    private void styleButton(JButton button, Color color) {
+        button.setFont(new Font("Arial", Font.PLAIN, 14));
+        button.setBackground(color);
+        button.setForeground(Color.WHITE);
+        button.setBorderPainted(false);
+        button.setOpaque(true);
     }
 
     public String getUsername() {

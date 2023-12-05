@@ -54,7 +54,7 @@ public class SellerView extends JFrame {
                 if (response == JOptionPane.YES_OPTION) {
                     dispose(); // Close the SellerView
                     LoginView loginView = new LoginView();
-                    LoginController loginController = new LoginController(loginView); 
+                    LoginController loginController = new LoginController(loginView);
                     loginView.setVisible(true);
                 }
             }
@@ -160,8 +160,6 @@ public class SellerView extends JFrame {
         add(tabbedPane);
         setLocationRelativeTo(null);
     }
-
-
 
     private void initializeProducts() {
         products = ProductData.getProducts();
