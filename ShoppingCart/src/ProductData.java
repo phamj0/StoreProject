@@ -20,4 +20,14 @@ public class ProductData {
     public static List<Product> getProducts() {
         return new ArrayList<>(products); // Return a copy to avoid modification
     }
+
+    public static void updateProductQuantity(Product product, int quantityChange) {
+        for (Product p : products) {
+            if (p.equals(product)) {
+                int newQuantity = Math.max(p.getQuantity() + quantityChange, 0);
+                p.setQuantity(newQuantity);
+                break;
+            }
+        }
+    }
 }

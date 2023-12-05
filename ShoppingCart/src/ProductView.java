@@ -241,8 +241,10 @@ public class ProductView extends JFrame {
         JButton confirmButton = new JButton("Confirm Purchase");
         confirmButton.addActionListener(e -> {
             // Handle payment processing and order confirmation
-            JOptionPane.showMessageDialog(checkoutDialog, "Purchase Successful!");
-            checkoutDialog.dispose();
+                JOptionPane.showMessageDialog(checkoutDialog, "Purchase Successful!");
+                updateProductQuantities();
+                shoppingCart.clearCart();
+                checkoutDialog.dispose();
         });
         checkoutDialog.add(confirmButton, BorderLayout.SOUTH);
 
@@ -251,4 +253,11 @@ public class ProductView extends JFrame {
         checkoutDialog.setVisible(true);
     }
 
+    private void updateProductQuantities() {
+        for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
+            Product product = entry.getKey();
+            int quantityPurchased = entry.getValue();
+            ProductData.updateProductQuantity(product, -quantityPurchased); // Assuming you have such a method in ProductData
+        }
+    }
 }
