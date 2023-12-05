@@ -3,6 +3,7 @@ import java.util.List;
 
 /**
  * Class that provides access to product data for the application.
+ * Singleton pattern because there is a single instance of the product data for the entire application.
  */
 public class ProductData {
     private static final List<Product> products = new ArrayList<>();
@@ -18,6 +19,7 @@ public class ProductData {
      * Add a new product to the product list.
      * Get a list of available products from the product list.
      * Update the quantity of a single product from the product list.
+     * Products can't be null and the quantity must be positive to increase, and negative for decrease.
      */
     public static void addProduct(Product product) {
         products.add(product);
@@ -41,8 +43,8 @@ public class ProductData {
 
     /**
      * A constructor that records a sale and updates the total revenue, total sales, and total profit.
-     * @param product  is the product being sold.
-     * @param quantity is the quantity sold.
+     * @param product  is the product being sold. Can't be null.
+     * @param quantity is the quantity sold. Needs to be greater than 0.
      */
     public static void recordSale(Product product, int quantity) {
         double revenueFromSale = product.getPrice() * quantity;
