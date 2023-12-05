@@ -11,7 +11,7 @@ public class LoginController {
     private Map<String, User> userDatabase;
 
     /**
-     * LoginController constrcutor with the specified LoginView.
+     * LoginController constructor with the specified LoginView.
      * @param loginView view associated with this controller.
      */
     public LoginController(LoginView loginView) {
