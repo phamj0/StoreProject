@@ -25,6 +25,7 @@ public class SellerView extends JFrame {
 
     // Components for Add Product Panel
     private JTextField productNameField;
+    private JTextField productCostField;
     private JTextField productPriceField;
     private JTextField productQuantityField;
     private JTextField productDescriptionField;
@@ -75,10 +76,10 @@ public class SellerView extends JFrame {
         // Inventory Panel
         initializeProducts();
         inventoryPanel = new JPanel(new BorderLayout());
-        inventoryModel = new DefaultTableModel(new Object[]{"Product Name", "Price", "Quantity", "Increase", "Decrease"}, 0) {
+        inventoryModel = new DefaultTableModel(new Object[]{"Product Name", "Cost", "Price", "Quantity", "Increase", "Decrease"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column >= 3; // Only buttons are editable
+                return column >= 4; // Only buttons are editable
             }
         };
         inventoryTable = new JTable(inventoryModel);
@@ -90,8 +91,9 @@ public class SellerView extends JFrame {
         inventoryPanel.add(new JScrollPane(inventoryTable), BorderLayout.CENTER);
 
         // Add Product Panel
-        addProductPanel = new JPanel(new GridLayout(5, 2)); // Adjust grid layout to accommodate new field
+        addProductPanel = new JPanel(new GridLayout(6, 2)); // Adjust grid layout to accommodate new field
         productNameField = new JTextField(10);
+        productCostField = new JTextField(10);
         productPriceField = new JTextField(10);
         productQuantityField = new JTextField(10);
         productDescriptionField = new JTextField(10);
@@ -102,13 +104,17 @@ public class SellerView extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     String name = productNameField.getText();
+                    double cost = Double.parseDouble(productCostField.getText());
                     double price = Double.parseDouble(productPriceField.getText());
                     String description = productDescriptionField.getText(); // Ensure this field is initialized
                     int quantity = Integer.parseInt(productQuantityField.getText());
                     if (quantity < 0) {
                         throw new IllegalArgumentException("Quantity cannot be negative.");
                     }
-                    Product newProduct = new Product(name, price, description, quantity);
+                    if (cost >= price) {
+                        throw new IllegalArgumentException("Cost must be less than the price.");
+                    }
+                    Product newProduct = new Product(name, cost, price, description, quantity);
 
                     // Add product to local list and shared ProductData
                     products.add(newProduct);
@@ -125,6 +131,8 @@ public class SellerView extends JFrame {
 
         addProductPanel.add(new JLabel("Product Name:"));
         addProductPanel.add(productNameField);
+        addProductPanel.add(new JLabel("Cost:"));
+        addProductPanel.add(productCostField);
         addProductPanel.add(new JLabel("Price:"));
         addProductPanel.add(productPriceField);
         addProductPanel.add(new JLabel("Quantity:"));
@@ -150,14 +158,16 @@ public class SellerView extends JFrame {
         inventoryModel.setRowCount(0); // Clear existing data
         for (Product product : products) {
             inventoryModel.addRow(new Object[]{
-                product.getName(), 
-                product.getPrice(), 
-                product.getQuantity(), 
-                "Increase", 
+                product.getName(),
+                product.getCost(),  // Add cost to the table
+                product.getPrice(),
+                product.getQuantity(),
+                "Increase",
                 "Decrease"
             });
         }
     }
+    
 
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {

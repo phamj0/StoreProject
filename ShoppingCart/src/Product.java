@@ -3,9 +3,11 @@ public class Product {
     private double price;
     private String description;
     private int quantity;
+    private double cost;
 
-    public Product(String name, double price, String description, int quantity) {
+    public Product(String name, double cost, double price, String description, int quantity) {
         this.name = name;
+        this.cost = cost;
         this.price = price;
         this.description = description;
         this.quantity = quantity;
@@ -17,6 +19,14 @@ public class Product {
 
     public void setName(String name) { 
         this.name = name; 
+    }
+
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
     }
 
     public double getPrice() { 
