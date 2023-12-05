@@ -38,7 +38,7 @@ public class ProductView extends JFrame {
         navBar.add(searchField, BorderLayout.CENTER);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        cartButton = new JButton(new ImageIcon("Images/SC.png"));
+        cartButton = new JButton(new ImageIcon("ShoppingCart/Images/SC.png"));
         cartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -71,6 +71,7 @@ public class ProductView extends JFrame {
         displayProducts(); // Display products
 
         add(new JScrollPane(productPanel), BorderLayout.CENTER);
+        setLocationRelativeTo(null);
     }
 
     private void refreshProducts() {
@@ -93,16 +94,7 @@ public class ProductView extends JFrame {
 
 
     private void initializeProducts() {
-        products = new ArrayList<>(); // Load products (hardcoded or from a database)
-        products.add(new Product("Product 1", 19.99, "Description", 10));
-        products.add(new Product("Product 2", 29.99, "Description",  5));
-        products.add(new Product("Product 3", 19.99, "Description", 10));
-        products.add(new Product("Product 4", 29.99, "Description", 5));
-        products.add(new Product("Product 5", 19.99, "Description", 10));
-        products.add(new Product("Product 6", 29.99, "Description", 5));
-        products.add(new Product("Product 7", 19.99, "Description", 10));
-        products.add(new Product("Product 8", 29.99, "Description", 5));
-
+        products = ProductData.getProducts();
     }
 
     private void displayProducts() {
@@ -141,15 +133,15 @@ public class ProductView extends JFrame {
         detailsDialog.add(new JLabel("Name: " + product.getName()));
         detailsDialog.add(new JLabel("Price: $" + product.getPrice()));
         detailsDialog.add(new JLabel("Description: " + product.getDescription()));
+        
         JButton addToCartButton = new JButton("Add to Cart");
         addToCartButton.addActionListener(e -> {
-            if (product.getQuantity() > 0) {
-                shoppingCart.addProduct(product);
+            if (shoppingCart.addProduct(product)) {
                 JOptionPane.showMessageDialog(detailsDialog,
                         "Added to cart: " + product.getName());
             } else {
                 JOptionPane.showMessageDialog(detailsDialog,
-                        "Product is out of stock", "Stock Alert", JOptionPane.WARNING_MESSAGE);
+                        "No more available", "Stock Alert", JOptionPane.WARNING_MESSAGE);
             }
         });
         detailsDialog.add(addToCartButton);
@@ -157,6 +149,7 @@ public class ProductView extends JFrame {
         detailsDialog.setLocationRelativeTo(this);
         detailsDialog.setVisible(true);
     }
+    
 
     private void showShoppingCart() {
         JDialog cartDialog = new JDialog(this, "Shopping Cart", true);
@@ -257,8 +250,5 @@ public class ProductView extends JFrame {
         checkoutDialog.setLocationRelativeTo(this);
         checkoutDialog.setVisible(true);
     }
-
-// ... (Rest of ProductView class) ...
-
 
 }

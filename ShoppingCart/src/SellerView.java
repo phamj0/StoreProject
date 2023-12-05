@@ -139,13 +139,11 @@ public class SellerView extends JFrame {
         tabbedPane.addTab("Add Product", addProductPanel);
 
         add(tabbedPane);
+        setLocationRelativeTo(null);
     }
 
     private void initializeProducts() {
-        products = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            products.add(new Product("Product " + i, i * 10.0, "Description", i * 5));
-        }
+        products = ProductData.getProducts();
     }
 
     private void updateInventoryTable() {

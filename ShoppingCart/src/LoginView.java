@@ -24,6 +24,7 @@ public class LoginView extends JFrame {
         panel.add(registerButton);
 
         add(panel);
+        setLocationRelativeTo(null);
     }
 
     public String getUsername() {
