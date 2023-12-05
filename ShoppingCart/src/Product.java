@@ -10,11 +10,11 @@ public class Product {
 
     /**
      * Product constructor that creates a new product with the specified attributes.
-     * @param name        is the name of the product.
-     * @param cost        is the cost of the product.
-     * @param price       is the selling price of the product.
-     * @param description is a description of the product.
-     * @param quantity    is the quantity of the product in stock.
+     * @param name        is the name of the product. Can't be null.
+     * @param cost        is the cost of the product. Can't be negative.
+     * @param price       is the selling price of the product. Can't be negative.
+     * @param description is a description of the product. Can't be null
+     * @param quantity    is the quantity of the product in stock. Can't be negative.
      */
     public Product(String name, double cost, double price, String description, int quantity) {
         this.name = name;
@@ -58,6 +58,10 @@ public class Product {
         this.description = description; 
     }
 
+    /**
+     * Turns the product information into an array of objects for displaying purposes.
+     * @return An array of objects that represent the products information.
+     */
     public Object[] toRow() {
         return new Object[]{name, price, quantity};
     }
