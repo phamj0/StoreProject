@@ -239,11 +239,22 @@ public class ProductView extends JFrame {
         // Checkout button
         JButton confirmButton = new JButton("Confirm Purchase");
         confirmButton.addActionListener(e -> {
-            // Handle payment processing and order confirmation
             if (validatePaymentDetails(cardNumberField.getText(), expiryDateField.getText(), cvvField.getText())) {
+                // Process payment and record sales
+                for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
+                    Product product = entry.getKey();
+                    int quantity = entry.getValue();
+                    ProductData.recordSale(product, quantity);
+                    // Update the product quantity in the global product data
+                    ProductData.updateProductQuantity(product, -quantity);
+                }
+
                 JOptionPane.showMessageDialog(checkoutDialog, "Purchase Successful!");
-                updateProductQuantities();
                 shoppingCart.clearCart();
+                // Call to refresh revenue data in SellerView
+                // Note: This requires access to an instance of SellerView. Adjust as per your application design.
+                // sellerView.refreshRevenueData();
+
                 checkoutDialog.dispose();
             }
         });

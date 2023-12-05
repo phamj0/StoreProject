@@ -14,9 +14,9 @@ public class SellerView extends JFrame {
     private JPanel addProductPanel;
 
     // Components for Revenue Panel
-    private JLabel revenueLabel;
-    private JLabel salesLabel;
-    private JLabel profitLabel;
+    private JLabel totalRevenueLabel;
+    private JLabel totalSalesLabel;
+    private JLabel totalProfitLabel;
 
     // Components for Inventory Panel
     private JTable inventoryTable;
@@ -64,15 +64,26 @@ public class SellerView extends JFrame {
 
         tabbedPane = new JTabbedPane();
 
-        // Revenue Panel
         revenuePanel = new JPanel();
-        revenueLabel = new JLabel("Revenue: ");
-        salesLabel = new JLabel("Sales: ");
-        profitLabel = new JLabel("Profit: ");
-        revenuePanel.add(revenueLabel);
-        revenuePanel.add(salesLabel);
-        revenuePanel.add(profitLabel);
-        
+        revenuePanel.setLayout(new BoxLayout(revenuePanel, BoxLayout.Y_AXIS));
+
+        JPanel revenueRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        totalRevenueLabel = new JLabel("Total Revenue: $" + ProductData.getTotalRevenue());
+        revenueRow.add(totalRevenueLabel);
+        revenuePanel.add(revenueRow);
+
+        JPanel salesRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        totalSalesLabel = new JLabel("Total Sales: " + ProductData.getTotalSales());
+        salesRow.add(totalSalesLabel);
+        revenuePanel.add(salesRow);
+
+        JPanel profitRow = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        totalProfitLabel = new JLabel("Total Profit: $" + ProductData.getTotalProfit());
+        profitRow.add(totalProfitLabel);
+        revenuePanel.add(profitRow);
+
+
+
         // Inventory Panel
         initializeProducts();
         inventoryPanel = new JPanel(new BorderLayout());
@@ -150,6 +161,8 @@ public class SellerView extends JFrame {
         setLocationRelativeTo(null);
     }
 
+
+
     private void initializeProducts() {
         products = ProductData.getProducts();
     }
@@ -166,6 +179,12 @@ public class SellerView extends JFrame {
                 "Decrease"
             });
         }
+    }
+
+    public void refreshRevenueData() {
+        totalRevenueLabel.setText("Total Revenue: $" + ProductData.getTotalRevenue());
+        totalSalesLabel.setText("Total Sales: " + ProductData.getTotalSales());
+        totalProfitLabel.setText("Total Profit: $" + ProductData.getTotalProfit());
     }
     
 

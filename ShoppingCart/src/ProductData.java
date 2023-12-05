@@ -30,4 +30,29 @@ public class ProductData {
             }
         }
     }
+
+    private static double totalRevenue = 0.0;
+    private static int totalSales = 0;
+    private static double totalProfit = 0.0;
+
+    public static void recordSale(Product product, int quantity) {
+        double revenueFromSale = product.getPrice() * quantity;
+        double costOfSale = product.getCost() * quantity;
+        totalRevenue += revenueFromSale;
+        totalProfit += (revenueFromSale - costOfSale);
+        totalSales += quantity;
+    }
+
+    public static double getTotalRevenue() {
+        return totalRevenue;
+    }
+
+    public static int getTotalSales() {
+        return totalSales;
+    }
+
+    public static double getTotalProfit() {
+        return totalProfit;
+    }
+
 }
