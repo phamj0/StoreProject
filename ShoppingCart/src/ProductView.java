@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
+/**
+ * ProductView class that represents the product catalog view in the application.
+ * Handling the display of products, shopping cart management, and checkout process.
+ */
 public class ProductView extends JFrame {
     private List<Product> products;
     private JPanel productPanel;
@@ -16,6 +20,9 @@ public class ProductView extends JFrame {
     private JButton cartButton;
     private JButton logoutButton;
 
+    /**
+     * ProductView constructor that creates a window with a product catalog and navigation bar.
+     */
     public ProductView() {
         setTitle("Product Catalog");
         setSize(800, 600);
@@ -23,26 +30,25 @@ public class ProductView extends JFrame {
         setLayout(new BorderLayout());
 
         UIManager.put("ScrollBar.width", 15);
-        UIManager.put("ScrollBar.thumb", new ColorUIResource(new Color(100, 149, 237))); // Thumb color
-        UIManager.put("ScrollBar.thumbHighlight", new ColorUIResource(Color.LIGHT_GRAY)); // Thumb highlight color
-        UIManager.put("ScrollBar.thumbDarkShadow", new ColorUIResource(Color.DARK_GRAY)); // Thumb shadow
-        UIManager.put("ScrollBar.thumbLightShadow", new ColorUIResource(Color.GRAY)); // Thumb light shadow
-        UIManager.put("ScrollBar.track", new ColorUIResource(new Color(240, 240, 240))); // Track color
+        UIManager.put("ScrollBar.thumb", new ColorUIResource(new Color(100, 149, 237)));
+        UIManager.put("ScrollBar.thumbHighlight", new ColorUIResource(Color.LIGHT_GRAY));
+        UIManager.put("ScrollBar.thumbDarkShadow", new ColorUIResource(Color.DARK_GRAY));
+        UIManager.put("ScrollBar.thumbLightShadow", new ColorUIResource(Color.GRAY));
+        UIManager.put("ScrollBar.track", new ColorUIResource(new Color(240, 240, 240)));
 
         Timer refreshTimer = new Timer(5000, e -> refreshProducts());
         refreshTimer.start();
 
         shoppingCart = new ShoppingCart();
         productPanel = new JPanel();
-        productPanel.setLayout(new GridLayout(0, 2, 10, 10)); // Spacing between products
-        productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Padding
+        productPanel.setLayout(new GridLayout(0, 2, 10, 10));
+        productPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Modernized navigation bar
         JPanel navBar = new JPanel(new BorderLayout(10, 10));
         JLabel storeName = new JLabel("My Store", JLabel.CENTER);
         storeName.setFont(new Font("Arial", Font.BOLD, 18));
         navBar.add(storeName, BorderLayout.WEST);
-
+        
         searchField = new JTextField();
         navBar.add(searchField, BorderLayout.CENTER);
 
@@ -58,7 +64,7 @@ public class ProductView extends JFrame {
         rightPanel.add(cartButton);
 
         logoutButton = new JButton("Logout");
-        styleButton(logoutButton, new Color(100, 149, 237)); // Styling the logout button
+        styleButton(logoutButton, new Color(100, 149, 237));
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -78,11 +84,11 @@ public class ProductView extends JFrame {
 
         add(navBar, BorderLayout.NORTH);
 
-        initializeProducts(); // Load products
-        displayProducts(); // Display products
+        initializeProducts();
+        displayProducts();
 
         JScrollPane scrollPane = new JScrollPane(productPanel);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // Remove border for a cleaner look
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         add(scrollPane, BorderLayout.CENTER);
 
         setLocationRelativeTo(null);
@@ -96,14 +102,15 @@ public class ProductView extends JFrame {
         button.setOpaque(true);
     }
 
+    /**
+     * Product catalog in the view is refreshed with the updated products.
+     */
     private void refreshProducts() {
         List<Product> updatedProducts = ProductData.getProducts();
-        // Create a map to efficiently check for existing products
         Map<String, Product> productMap = new HashMap<>();
         for (Product p : products) {
             productMap.put(p.getName(), p);
         }
-        // Merge updated products, avoiding duplicates
         for (Product p : updatedProducts) {
             if (!productMap.containsKey(p.getName())) {
                 products.add(p);
@@ -114,11 +121,19 @@ public class ProductView extends JFrame {
         repaint();
     }
 
-
+    /**
+     * Initialize the product catalog with products.
+     */
     private void initializeProducts() {
         products = ProductData.getProducts();
     }
 
+    /**
+     * Styling a JButton with a specified background color and font.
+     * @param button          is the JButton to style.
+     * @param backgroundColor is the background color for the button.
+     * @param textColor       is the text color for the button.
+     */
     private void styleButton(JButton button, Color backgroundColor, Color textColor) {
         button.setFont(new Font("Arial", Font.BOLD, 14));
         button.setBackground(backgroundColor);
@@ -128,9 +143,13 @@ public class ProductView extends JFrame {
         button.setOpaque(true);
     }
 
+    /**
+     * Display the products in the product catalog.
+     * productPanel updated to display current list of products.
+     */
     private void displayProducts() {
         productPanel.removeAll();
-        productPanel.setLayout(new GridLayout(0, 1, 10, 10)); // One item per row
+        productPanel.setLayout(new GridLayout(0, 1, 10, 10));
 
         for (Product product : products) {
             JPanel itemPanel = new JPanel();
@@ -177,13 +196,16 @@ public class ProductView extends JFrame {
         productPanel.repaint();
     }
 
+    /**
+     * Showing the details of a selected product in a dialog.
+     * @param product is the selected product. Product can't be null.
+     */
     private void showProductDetails(Product product) {
         JDialog detailsDialog = new JDialog(this, "Product Details", true);
         detailsDialog.setLayout(new BorderLayout());
         detailsDialog.setSize(400, 300);
         detailsDialog.setLocationRelativeTo(this);
 
-        // Panel for displaying product details
         JPanel detailsPanel = new JPanel();
         detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
         detailsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -203,7 +225,6 @@ public class ProductView extends JFrame {
 
         detailsDialog.add(new JScrollPane(detailsPanel), BorderLayout.CENTER);
 
-        // Add to Cart button with modern styling
         JButton addToCartButton = new JButton("Add to Cart");
         styleButton(addToCartButton, new Color(60, 179, 113), Color.WHITE);
         addToCartButton.addActionListener(e -> {
@@ -222,9 +243,9 @@ public class ProductView extends JFrame {
         detailsDialog.setVisible(true);
     }
 
-
-
-
+    /**
+     * Displaying the contents of the shopping cart in a dialog.
+     */
     private void showShoppingCart() {
         JDialog cartDialog = new JDialog(this, "Shopping Cart", true);
         cartDialog.setLayout(new BorderLayout());
@@ -289,14 +310,15 @@ public class ProductView extends JFrame {
         cartDialog.setVisible(true);
     }
 
-
+    /**
+     * Displaying the checkout window when completing the purchase.
+     */
     private void showCheckoutWindow() {
         JDialog checkoutDialog = new JDialog(this, "Checkout", true);
         checkoutDialog.setLayout(new BorderLayout());
         checkoutDialog.setSize(400, 400);
         checkoutDialog.setLocationRelativeTo(this);
 
-        // Panel for cart summary
         JPanel summaryPanel = new JPanel();
         summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
         summaryPanel.setBorder(BorderFactory.createTitledBorder("Cart Summary"));
@@ -310,7 +332,6 @@ public class ProductView extends JFrame {
         }
         checkoutDialog.add(new JScrollPane(summaryPanel), BorderLayout.NORTH);
 
-        // Panel for payment information
         JPanel paymentPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         paymentPanel.setBorder(BorderFactory.createTitledBorder("Payment Information"));
         paymentPanel.setOpaque(false);
@@ -336,58 +357,55 @@ public class ProductView extends JFrame {
 
         checkoutDialog.add(paymentPanel, BorderLayout.CENTER);
 
-        // Checkout button
         JButton confirmButton = new JButton("Confirm Purchase");
         styleButton(confirmButton, new Color(60, 179, 113), Color.WHITE);
         confirmButton.addActionListener(e -> {
             if (validatePaymentDetails(cardNumberField.getText(), expiryDateField.getText(), cvvField.getText())) {
-                // Process payment and record sales
                 for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
                     Product product = entry.getKey();
                     int quantity = entry.getValue();
                     ProductData.recordSale(product, quantity);
-                    // Update the product quantity in the global product data
                     ProductData.updateProductQuantity(product, -quantity);
                 }
 
                 JOptionPane.showMessageDialog(checkoutDialog, "Purchase Successful!");
                 shoppingCart.clearCart();
-                // Call to refresh revenue data in SellerView
-                // Note: This requires access to an instance of SellerView. Adjust as per your application design.
-                // sellerView.refreshRevenueData();
-
                 checkoutDialog.dispose();
             }
         });
         checkoutDialog.add(confirmButton, BorderLayout.SOUTH);
-
         checkoutDialog.setSize(400, 400);
         checkoutDialog.setLocationRelativeTo(this);
         checkoutDialog.setVisible(true);
     }
 
+    /**
+     * Validation for the payment details entered by the user.
+     * @param cardNumber  is the entered card number. Must be 16 digits.
+     * @param expiryDate  The entered expiry date. Needs to follow MM/YY format.
+     * @param cvv         The entered CVV. Must be 3 digits.
+     * @return True if the payment details are valid, false otherwise.
+     * cardNumber, expiryDate, and cvv can't be null.
+     */
     private boolean validatePaymentDetails(String cardNumber, String expiryDate, String cvv) {
-        // Validate Card Number (16 digits)
         if (!cardNumber.matches("\\d{16}")) {
             JOptionPane.showMessageDialog(this, "Invalid Card Number. It must be 16 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
-        // Validate Expiry Date (MM/YY format)
         if (!expiryDate.matches("(0[1-9]|1[0-2])/\\d{2}")) {
             JOptionPane.showMessageDialog(this, "Invalid Expiry Date. Format must be MM/YY.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
-        // Validate CVV (3 digits)
         if (!cvv.matches("\\d{3}")) {
             JOptionPane.showMessageDialog(this, "Invalid CVV. It must be 3 digits.", "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
         return true;
     }
 
+    /**
+     * Update the quantities of purchased products in the product data.
+     */
     private void updateProductQuantities() {
         for (Map.Entry<Product, Integer> entry : shoppingCart.getProducts()) {
             Product product = entry.getKey();
