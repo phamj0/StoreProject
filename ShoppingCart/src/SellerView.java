@@ -7,23 +7,26 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * SellerView class that represents the seller dashboard in the application.
+ */
 public class SellerView extends JFrame {
     private JTabbedPane tabbedPane;
     private JPanel revenuePanel;
     private JPanel inventoryPanel;
     private JPanel addProductPanel;
 
-    // Components for Revenue Panel
+    // Revenue Panel
     private JLabel totalRevenueLabel;
     private JLabel totalSalesLabel;
     private JLabel totalProfitLabel;
 
-    // Components for Inventory Panel
+    // Inventory Panel
     private JTable inventoryTable;
     private DefaultTableModel inventoryModel;
     private List<Product> products;
 
-    // Components for Add Product Panel
+    // Add Product Panel
     private JTextField productNameField;
     private JTextField productCostField;
     private JTextField productPriceField;
@@ -31,20 +34,21 @@ public class SellerView extends JFrame {
     private JTextField productDescriptionField;
     private JButton addProductButton;
 
+    // Logout 
     private JButton logoutButton;
 
+    /**
+     * SellerView constructor to create a window with tabs for revenue, inventory, and adding products.
+     */
     public SellerView() {
         setTitle("Seller Dashboard");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         setLayout(new BorderLayout());
 
         logoutButton = new JButton("Logout");
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         topPanel.add(logoutButton);
-
-        // Logout button action
         logoutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -52,7 +56,7 @@ public class SellerView extends JFrame {
                         "Are you sure you want to log out?", "Confirm Logout",
                         JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
                 if (response == JOptionPane.YES_OPTION) {
-                    dispose(); // Close the SellerView
+                    dispose();
                     LoginView loginView = new LoginView();
                     LoginController loginController = new LoginController(loginView);
                     loginView.setVisible(true);
@@ -61,9 +65,8 @@ public class SellerView extends JFrame {
         });
 
         add(topPanel, BorderLayout.NORTH);
-
         tabbedPane = new JTabbedPane();
-
+        
         revenuePanel = new JPanel();
         revenuePanel.setLayout(new BoxLayout(revenuePanel, BoxLayout.Y_AXIS));
 
@@ -82,15 +85,14 @@ public class SellerView extends JFrame {
         profitRow.add(totalProfitLabel);
         revenuePanel.add(profitRow);
 
-
-
         // Inventory Panel
         initializeProducts();
         inventoryPanel = new JPanel(new BorderLayout());
-        inventoryModel = new DefaultTableModel(new Object[]{"Product Name", "Cost", "Price", "Quantity", "Increase", "Decrease"}, 0) {
+        inventoryModel = new DefaultTableModel(new Object[]{"Product Name", "Cost", "Price", "Quantity", 
+                                                            "Increase", "Decrease"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column >= 4; // Only buttons are editable
+                return column >= 4;
             }
         };
         inventoryTable = new JTable(inventoryModel);
@@ -102,13 +104,12 @@ public class SellerView extends JFrame {
         inventoryPanel.add(new JScrollPane(inventoryTable), BorderLayout.CENTER);
 
         // Add Product Panel
-        addProductPanel = new JPanel(new GridLayout(6, 2)); // Adjust grid layout to accommodate new field
+        addProductPanel = new JPanel(new GridLayout(6, 2));
         productNameField = new JTextField(10);
         productCostField = new JTextField(10);
         productPriceField = new JTextField(10);
         productQuantityField = new JTextField(10);
         productDescriptionField = new JTextField(10);
-        // Add Product Panel
         addProductButton = new JButton("Add Product");
         addProductButton.addActionListener(new ActionListener() {
             @Override
@@ -117,7 +118,7 @@ public class SellerView extends JFrame {
                     String name = productNameField.getText();
                     double cost = Double.parseDouble(productCostField.getText());
                     double price = Double.parseDouble(productPriceField.getText());
-                    String description = productDescriptionField.getText(); // Ensure this field is initialized
+                    String description = productDescriptionField.getText();
                     int quantity = Integer.parseInt(productQuantityField.getText());
                     if (quantity < 0) {
                         throw new IllegalArgumentException("Quantity cannot be negative.");
@@ -126,8 +127,6 @@ public class SellerView extends JFrame {
                         throw new IllegalArgumentException("Cost must be less than the price.");
                     }
                     Product newProduct = new Product(name, cost, price, description, quantity);
-
-                    // Add product to local list and shared ProductData
                     products.add(newProduct);
                     ProductData.addProduct(newProduct);
 
@@ -148,11 +147,10 @@ public class SellerView extends JFrame {
         addProductPanel.add(productPriceField);
         addProductPanel.add(new JLabel("Quantity:"));
         addProductPanel.add(productQuantityField);
-        addProductPanel.add(new JLabel("Description:"));  // Add a label for description
-        addProductPanel.add(productDescriptionField);     // Add the description field to the panel
+        addProductPanel.add(new JLabel("Description:"));
+        addProductPanel.add(productDescriptionField);
         addProductPanel.add(addProductButton);
 
-        // Adding tabs to TabbedPane
         tabbedPane.addTab("Revenue", revenuePanel);
         tabbedPane.addTab("Inventory", inventoryPanel);
         tabbedPane.addTab("Add Product", addProductPanel);
@@ -161,16 +159,25 @@ public class SellerView extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Initializes the product list from the data source.
+     * Singleton Pattern ensures that the product data is initialized only once.
+     */
     private void initializeProducts() {
         products = ProductData.getProducts();
     }
 
+    /**
+     * Updates the inventory table with the current product data.
+     * Observer pattern allows the inventory table to observe the changes in
+     * the product data and updates itself accordingly
+     */
     private void updateInventoryTable() {
-        inventoryModel.setRowCount(0); // Clear existing data
+        inventoryModel.setRowCount(0);
         for (Product product : products) {
             inventoryModel.addRow(new Object[]{
                 product.getName(),
-                product.getCost(),  // Add cost to the table
+                product.getCost(),
                 product.getPrice(),
                 product.getQuantity(),
                 "Increase",
@@ -179,25 +186,37 @@ public class SellerView extends JFrame {
         }
     }
 
+    /**
+     * Refreshes the revenue data displayed on the revenue tab.
+     * Observer pattern refreshes data when changes occur.
+     */
     public void refreshRevenueData() {
         totalRevenueLabel.setText("Total Revenue: $" + ProductData.getTotalRevenue());
         totalSalesLabel.setText("Total Sales: " + ProductData.getTotalSales());
         totalProfitLabel.setText("Total Profit: $" + ProductData.getTotalProfit());
     }
-    
 
+    /**
+     * Custom renderer that renders the buttons in a table cell.
+     * Strategy pattern encapsulates the behavior of buttons, allowing 
+     * it to be easily replaced or extended.
+     */
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
         }
 
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, 
+                                                       boolean hasFocus, int row, int column) {
             setText((value == null) ? "" : value.toString());
             return this;
         }
     }
 
+    /**
+     * Custom editor that handles the button clicks in a table cell.
+     * Command pattern because it encapsulates the logic and information associated with button clicks.
+     */
     class ButtonEditor extends DefaultCellEditor {
         protected JButton button;
         private boolean isPushed;
@@ -246,5 +265,4 @@ public class SellerView extends JFrame {
             return button.getText();
         }
     }
-
 }
